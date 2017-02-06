@@ -1,3 +1,4 @@
+import java.util.Scanner;
 class PhoneInfo
 {
 String name;
@@ -25,18 +26,46 @@ System.out.println(" ---- PhoneInfo ---- ");
 System.out.println("name: " + name);
 System.out.println("phoneNumber: " + phoneNumber);
 if(birthday!=null) System.out.println("birthday: " + birthday);
+System.out.println("");
 }
 
 }
+
 class PhoneMain
 {
+static Scanner input= new Scanner(System.in);
 
+public static void ShowSelection()
+{
+System.out.println(" ---- Select ---- ");
+System.out.println("1. Input info");
+System.out.println("2. Quit program");
+System.out.print("Select: ");
+}
+
+public static void GetInfo()
+{
+System.out.print("Name: ");
+String name=input.nextLine();
+System.out.print("PhoneNumber: ");
+String phoneNumber=input.nextLine();
+System.out.print("BirthDay: ");
+String birthday=input.nextLine();
+
+PhoneInfo pinfo= new PhoneInfo(name,phoneNumber,birthday);
+pinfo.ShowPhoneInfo();
+}
 public static void main(String[] args)
 {
-PhoneInfo pi= new PhoneInfo("Kim","010-1111-1111");
-PhoneInfo pi2= new PhoneInfo("Park","010-2222-2222","1993/10/01");
-pi.ShowPhoneInfo();
-pi2.ShowPhoneInfo();
+int select=0;
+while(2!=select){
+ShowSelection();
+select=input.nextInt();
+input.nextLine();
+if(1==select){
+GetInfo();
+}
+}
 }
 
 }
