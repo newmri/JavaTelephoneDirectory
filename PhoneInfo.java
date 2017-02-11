@@ -1,5 +1,7 @@
 import java.util.Scanner;
 
+interface MENU{int INPUT=1, SEARCH=2, DELETE=3, EXIT=4;}
+interface INPUT_SELECT{int NORMAL=1, UNIV=2, COMPANY=3;}
 
 class PhoneInfo
 {
@@ -77,6 +79,15 @@ final int MAX=100;
 int cnt=0;
 PhoneInfo[] pifdata = new PhoneInfo[MAX];
 Scanner input= new Scanner(System.in);
+static PhoneBookManager inst=null;
+
+private PhoneBookManager(){}
+
+public static PhoneBookManager CreateManagerInst()
+{
+if(null==inst) inst=new PhoneBookManager();
+return inst;
+}
 
 public void ShowSelection()
 {
@@ -160,13 +171,13 @@ int select = input.nextInt();
 input.nextLine();
 
 switch(select){
-case 1:
+case INPUT_SELECT.NORMAL:
 	GetNormalInfo();
 	break;
-case 2:
+case INPUT_SELECT.UNIV:
 	GetUnivInfo();
 	break;
-case 3:
+case INPUT_SELECT.COMPANY:
 	GetCompanyInfo();
 	break;
 default:
@@ -181,7 +192,7 @@ class PhoneMain
 {
 public static void main(String[] args)
 {
-PhoneBookManager pbm= new PhoneBookManager();
+PhoneBookManager pbm= PhoneBookManager.CreateManagerInst();
 int select=0;
 
 while(true){
@@ -190,16 +201,16 @@ select=pbm.input.nextInt();
 pbm.input.nextLine();
 
 switch(select){
-case 1:
+case MENU.INPUT:
 	pbm.GetInfo();
 	break;
-case 2:
+case MENU.SEARCH:
 	pbm.SearchInfo();
 	break;
-case 3:
+case MENU.DELETE:
 	pbm.DeleteInfo();
 	break;
-case 4:
+case MENU.EXIT:
 	System.out.println("Quited Program..");
 	return;
 default: System.out.println("Error");
