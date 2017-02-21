@@ -3,6 +3,16 @@ import java.util.Scanner;
 interface MENU{int INPUT=1, SEARCH=2, DELETE=3, EXIT=4;}
 interface INPUT_SELECT{int NORMAL=1, UNIV=2, COMPANY=3;}
 
+class MenuSelectException extends Exception
+{
+int wrongSelect;
+public MenuSelectException(int num)
+{
+super("wrong select");
+wrongSelect=num;
+}
+public void ShowException(){System.out.println("Number: " + wrongSelect + " Invalide Number");}
+}
 class PhoneInfo
 {
 String name;
@@ -164,7 +174,7 @@ System.out.print("company: ");
 String company=input.nextLine();
 pifdata[cnt++] = new PhoneCompanyInfo(name,phoneNumber,company);	
 }
-public void GetInfo()
+public void GetInfo() throws MenuSelectException
 {
 System.out.print("1. normal 2. Univ 3. Company: ");
 int select = input.nextInt();
@@ -181,8 +191,7 @@ case INPUT_SELECT.COMPANY:
 	GetCompanyInfo();
 	break;
 default:
-	System.out.println("Error");
-	break;	
+	throw new MenuSelectException(select);
 }
 
 }
@@ -196,6 +205,8 @@ PhoneBookManager pbm= PhoneBookManager.CreateManagerInst();
 int select=0;
 
 while(true){
+try{
+
 pbm.ShowSelection();
 select=pbm.input.nextInt();
 pbm.input.nextLine();
@@ -213,8 +224,14 @@ case MENU.DELETE:
 case MENU.EXIT:
 	System.out.println("Quited Program..");
 	return;
-default: System.out.println("Error");
-	 break;
+default: throw new MenuSelectException(select);
+	 
+}
+
+}
+
+catch(MenuSelectException e){
+e.ShowException();
 }
 
 }
