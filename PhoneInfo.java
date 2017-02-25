@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.HashSet;
+import java.util.Iterator;
 
 interface MENU{int INPUT=1, SEARCH=2, DELETE=3, EXIT=4;}
 interface INPUT_SELECT{int NORMAL=1, UNIV=2, COMPANY=3;}
@@ -13,6 +15,7 @@ wrongSelect=num;
 }
 public void ShowException(){System.out.println("Number: " + wrongSelect + " Invalide Number");}
 }
+
 class PhoneInfo
 {
 String name;
@@ -34,6 +37,14 @@ System.out.println("phoneNumber: " + phoneNumber);
 System.out.println("");
 }
 
+public int hashCode(){return name.hashCode();}
+
+public boolean equals(Object obj)
+{
+PhoneInfo comp=(PhoneInfo)obj;
+if(name.compareTo(comp.name)==0) return true;
+else return false;
+}
 
 }
 
@@ -85,9 +96,7 @@ System.out.println("");
 }
 class PhoneBookManager
 {
-final int MAX=100;
-int cnt=0;
-PhoneInfo[] pifdata = new PhoneInfo[MAX];
+HashSet<PhoneInfo> m_info= new HashSet<PhoneInfo>();
 Scanner input= new Scanner(System.in);
 static PhoneBookManager inst=null;
 
@@ -111,35 +120,45 @@ System.out.print("Select: ");
 
 
 
-public int search(String name)
+public PhoneInfo search(String name)
 {
-for( int i=0; i<cnt; i++){
-PhoneInfo temp = pifdata[i];
-if(name.compareTo(temp.name)==0) return i;
+
+Iterator<PhoneInfo> itor=m_info.iterator();
+while(itor.hasNext()){
+PhoneInfo curinfo=itor.next();
+if(name.compareTo(curinfo.name)==0) return curinfo;
 }
-return -1;
+return null;
 }
 
 public void SearchInfo()
 {
 System.out.print("Name: ");
 String name=input.nextLine();
-int idx=search(name);
-if(-1!=idx) pifdata[idx].ShowPhoneInfo();
-else System.out.println("There is no data");
+
+PhoneInfo info=search(name);
+if(null==info)
+	System.out.println("There is no data");
+else
+	info.ShowPhoneInfo();
+
 }
 
 public void DeleteInfo()
 {
 System.out.print("Name: ");
 String name=input.nextLine();
-int idx=search(name);
-if(-1!=idx){
-for(int i=idx; i<(cnt-1); i++)
-pifdata[i]=pifdata[i+1];
-cnt--;
-} 
-else System.out.println("There is no data");
+
+Iterator<PhoneInfo> itor=m_info.iterator();
+while(itor.hasNext()){
+PhoneInfo curinfo=itor.next();
+if(name.compareTo(curinfo.name)==0){
+itor.remove();
+System.out.println("Data has been deleted.");
+return;
+}
+}
+System.out.println("There is no data");
 
 }
 
@@ -149,7 +168,15 @@ System.out.print("Name: ");
 String name=input.nextLine();
 System.out.print("PhoneNumber: ");
 String phoneNumber=input.nextLine();
-pifdata[cnt++] = new PhoneInfo(name,phoneNumber);	
+PhoneInfo info = new PhoneInfo(name,phoneNumber);
+boolean canadd=m_info.add(info);
+
+if(true==canadd)
+	System.out.println("Data store has been succssed.");
+else
+	System.out.println("Data u have inputed already exists.");	
+
+
 }
 private void GetUnivInfo()
 {
@@ -161,7 +188,15 @@ System.out.print("Major: ");
 String major=input.nextLine();
 System.out.print("year: ");
 int year=input.nextInt();
-pifdata[cnt++] = new PhoneUniveInfo(name,phoneNumber,major,year);
+
+PhoneInfo info = new PhoneUniveInfo(name,phoneNumber,major,year);
+boolean canadd=m_info.add(info);
+
+if(canadd)
+	System.out.println("Data store has been succssed.");
+else
+	System.out.println("Data u have inputed already exists.");	
+
 }
 
 private void GetCompanyInfo()
@@ -172,8 +207,18 @@ System.out.print("PhoneNumber: ");
 String phoneNumber=input.nextLine();
 System.out.print("company: ");
 String company=input.nextLine();
-pifdata[cnt++] = new PhoneCompanyInfo(name,phoneNumber,company);	
+
+PhoneInfo info = new PhoneCompanyInfo(name,phoneNumber,company);
+boolean canadd=m_info.add(info);
+
+if(canadd)
+	System.out.println("Data store has been succssed.");
+else
+	System.out.println("Data u have inputed already exists.");	
+
+
 }
+
 public void GetInfo() throws MenuSelectException
 {
 System.out.print("1. normal 2. Univ 3. Company: ");
@@ -196,6 +241,7 @@ default:
 
 }
 }
+
 
 class PhoneMain
 {
@@ -230,12 +276,11 @@ default: throw new MenuSelectException(select);
 
 }
 
-catch(MenuSelectException e){
-e.ShowException();
-}
+catch(MenuSelectException e){e.ShowException();}
 
 }
 
 }
 
 }
+
